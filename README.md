@@ -1,7 +1,7 @@
 Role Name
 =========
 
-This role will remediate most CIS compliance for RHEL76. Some invasive settings are not in here to prevent breaking functional IDs
+This role will remediate most CIS compliance for RHEL7. Some invasive settings are not in here to prevent breaking functional IDs
 
 
 License
