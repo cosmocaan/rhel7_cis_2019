@@ -1,0 +1,11 @@
+---
+- name: postbuild for RHEL7 standard server
+  become: true
+  hosts: esrdbp77
+  vars:
+#    - grey_interface: ens224
+#    - grey_gateway: 10.186.197.1
+    #- sat6: "esappp0177.corpaa.aa.com"
+  roles:
+    - rhel7_cis_2019
+...
