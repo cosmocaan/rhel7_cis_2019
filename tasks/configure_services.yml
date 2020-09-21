@@ -1,0 +1,22 @@
+---
+- service_facts:
+- name: disable insecure services
+  service:
+    state: stopped
+    name: '{{ item }}'
+    enabled: false
+  with_items: '{{ disabled_services }}'
+  when: item in services
+
+- name: remove insecure packages
+  yum:
+    state: absent
+    name: '{{ removed_services }}'
+  #with_items: '{{ removed_services }}'
+
+- name: install required packages
+  yum:
+    state: latest
+    name: '{{ install_packages }}'
+  #with_items: '{{ install_packages }}'
+...

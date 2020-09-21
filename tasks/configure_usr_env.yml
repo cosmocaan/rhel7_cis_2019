@@ -1,0 +1,91 @@
+---
+# Configure PAM per section 5.3 of RHEL CIS Standards 2019
+- name: Configure Password Creation Requirement
+  lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - { regexp: '^#?dcredit = ', line: 'dcredit = -1' }
+    - { regexp: '^#?ucredit = ', line: 'ucredit = -1' }
+    - { regexp: '^#?lcredit = ', line: 'lcredit = -1' }
+    - { regexp: '^#?ocredit = ', line: 'ocredit = -1' }
+    - { regexp: '^#?minlen = ', line: 'minlen = 8' }
+
+- name: modify /etc/login.defs
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    backup: yes
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - { regexp: '^#?PASS_MAX_DAYS', line: 'PASS_MAX_DAYS 90' }
+    - { regexp: '^#?PASS_MIN_DAYS', line: 'PASS_MIN_DAYS 7' }
+    - { regexp: '^#?PASS_WARN_AGE', line: 'PASS_WARN_AGE 7' }
+
+- name: Put CIS compliant password-auth and system-auth files in place
+  copy: 
+    src: '{{ item }}'
+    dest: '/etc/pam.d/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - system-auth-local
+    - password-auth-local
+
+- name: move password-auth and system-auth links to point to new files
+  file:
+    state: link
+    src: '{{ item }}-local'
+    path: '/etc/pam.d/{{ item }}'
+    force: yes
+  with_items:
+    - system-auth
+    - password-auth
+
+- name: find all profile files in /etc/profile.d
+  find:
+    path: /etc/profile.d
+    file_type: file
+    pattern: '*.sh'
+  register: profiled
+
+- name: edit umask for all bashrc and profile items
+  lineinfile:
+    path: '{{ item.path }}'
+    mode: 0644
+    owner: root
+    group: root
+    regexp: '(^(\s)*(?!#)(\s)*umask) .*$'
+    line: 'umask 027'
+  with_items:
+    - { path: /etc/profile }
+    - { path: /etc/bashrc }
+    - '{{ profiled.files }}'
+    
+- name: edit TMOUT for all bashrc and profile items
+  lineinfile:
+    path: '{{ item.path }}'
+    mode: 0644
+    owner: root
+    group: root
+    regexp: '(^(\s)*(?!#)(\s)*TMOUT)=.*$'
+    line: 'TMOUT=600' 
+  with_items:
+    - { path: /etc/profile }
+    - { path: /etc/bashrc }
+    - '{{ profiled.files }}'
+
+#- name: Maximum number of days between password change
+#  shell: 
+#  args:
+#    cmd: 'for i in `egrep ^[^:]+:[^\!*] /etc/shadow | cut -d: -f1`|grep -v ^z; do chage --maxdays 90 $i; done'
+...

@@ -1,0 +1,24 @@
+---
+- name: register all files in /etc/yum.repos.d/
+  find: 
+    paths: /etc/yum.repos.d
+    file_type: file
+    recurse: no
+  register: yumrepos
+
+- name: set gpgcheck to true on all repositories
+  replace: 
+    path: '{{ item.path }}'
+    regexp: '^gpgcheck\s*=.*$'
+    replace: 'gpgcheck=1'
+  with_items: '{{ yumrepos.files }}'
+
+- name: set gpgcheck to true in yum.conf
+  lineinfile:
+    state: present
+    path: /etc/yum.conf
+    regexp: '^gpgcheck\s*=.*$'
+    line: 'gpgcheck=1'
+    
+...
+

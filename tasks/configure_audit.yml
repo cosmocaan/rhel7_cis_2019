@@ -1,0 +1,43 @@
+---
+## Configure Audit Policy
+
+## Enable Audit Service
+- name: Enable Audit Service
+  systemd:
+    name: auditd
+    state: started
+    enabled: yes
+
+- name: Configure CIS Audit Rules
+  copy:
+    src: CIS_auditRedhat7.rules
+    dest: /etc/audit/rules.d/audit.rules
+    owner: root
+    group: root
+    mode: 0640
+  notify: restart auditd service
+
+- name: Configure auditd.conf
+  lineinfile:
+    line: '{{ item.line }}'
+    regexp: '{{ item.regexp }}'
+    path: /etc/audit/auditd.conf
+  with_items: 
+    - { regexp: '^max_log_file\s?=', line: 'max_log_file = 8' }
+    - { regexp: '^space_left_action\s?=', line: 'space_left_action = email' }
+    - { regexp: '^action_mail_acct\s?=', line: 'action_mail_acct = root' }
+    - { regexp: '^admin_space_left_action\s?=', line: 'admin_space_left_action = suspend' }
+    - { regexp: '^max_log_file_action\s?=', line: 'max_log_file_action = keep_logs' }
+  notify: restart auditd service
+
+- name: Remove sticky bit from problem files
+  file:
+    path: '{{ item.files }}'
+    mode: 0755
+  with_items:
+    - { files: /usr/sbin/fping6 }
+    - { files: /usr/share/doc/fping-3.10/COPYING }
+    - { files: /usr/share/doc/fping-3.10/ChangeLog }
+    - { files: /usr/share/doc/fping-3.10/README } 
+
+...

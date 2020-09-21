@@ -1,0 +1,29 @@
+---
+- name: Configure /tmp to use rw,nosuid,nodev,noexec,relatime
+  mount:
+    state: mounted
+    src: /dev/mapper/rootvg-tmp
+    path: /tmp
+    fstype: xfs
+    opts: rw,nosuid,nodev,noexec,relatime
+  
+- name: Configure /home with nodev
+  mount:
+    state: mounted
+    src: /dev/mapper/rootvg-home
+    path: /home
+    fstype: xfs
+    opts: nodev
+
+- name: Configure nodev on /dev/shm
+  mount:
+    state: mounted
+    src: tmpfs
+    path: /dev/shm
+    fstype: tmpfs
+    opts: nodev,nosuid,noexec
+
+#- name: register all root directories
+#- name: Configure Sticky bit on all root directories
+  
+...

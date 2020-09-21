@@ -1,0 +1,73 @@
+---
+## Configure settings for Rsyslog
+- name: Install rsyslog
+  yum:
+    name: rsyslog
+    state: installed
+
+#- name: Set Correct Permission on Files
+#  file:
+#    path: "{{ item }}"
+#    mode: g-wx,o-rwx
+#  with_items:
+#    - /var/log/messages
+#    - /var/log/secure
+#    - /var/log/maillog
+#    - /var/log/cron
+#    - /var/log/spooler
+#    - /var/log/boot.log
+#
+- name: Find log files in /var/log
+  find: 
+    file_type: file
+    paths: /var/log/
+    recurse: yes
+  register: logfiles
+
+- name: Set Correct Permissions on log files from logfiles
+  file:
+    path: "{{ item.path }}"
+    mode: g-wx,o-rwx
+  with_items: '{{ logfiles.files }}'
+
+- name: Create logperms file
+  file: 
+    path: /etc/cron.d/logperms
+    mode: "0600"
+    state: touch
+
+- name: Add cron to set logfile permissions half-hourly
+  lineinfile:
+    dest: /etc/cron.d/logperms
+    line: '0,30 * * * * find /var/log -type f -exec chmod g-wx,o-rwx {} +'
+
+- name: Set FileCreateMode to 0640
+  lineinfile:
+    dest: /etc/rsyslog.conf
+    line: '$FileCreateMode 0640'
+  notify: restart rsyslog service
+
+- name: Forward logs to QRadar
+  lineinfile:
+    line: '*.*    @@10.52.253.50'
+    dest: /etc/rsyslog.conf
+  notify: restart rsyslog service
+
+- name: Enable rsyslog start at Boot
+  systemd:
+    name: rsyslog
+    enabled: yes
+    state: started
+
+- name: Ensure logrotate set for default logs
+  lineinfile:
+    line: '{{ item }}'
+    path: /etc/logrotate.d/syslog
+  with_items:
+    - /var/log/messages
+    - /var/log/secure
+    - /var/log/maillog
+    - /var/log/cron
+    - /var/log/spooler
+    - /var/log/boot.log
+...

@@ -1,0 +1,15 @@
+---
+- name: add disable unwanted modules and filesystems to cis.conf
+  lineinfile:
+    create: yes
+    state: present
+    dest: /etc/modprobe.d/CIS.conf
+    line: 'install {{ item }} /bin/true'
+  with_items: '{{ disabled_kernmods }}'
+
+- name: unload kernel modules for filesystems and kernel modules
+  modprobe:
+    state: absent
+    name: '{{ item }}'
+  with_items: '{{ disabled_kernmods }}'
+...

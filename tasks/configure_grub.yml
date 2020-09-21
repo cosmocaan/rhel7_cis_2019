@@ -1,0 +1,47 @@
+---
+- name: find grub.cfg file in /boot
+  find:
+    path: /boot
+    recurse: true
+    file_type: file
+    pattern: grub.cfg
+  register: grubcfg
+
+- debug: 
+    var: grubcfg
+
+- name: Configure Grub Owner & Permission
+  file: 
+    path: '{{ item.path }}'
+    owner: root
+    group: root
+    mode: go-rwx
+  with_items: 
+    - '{{ grubcfg.files }}'
+  when: item.path is defined
+
+- name: Configure ipv6 on Grub
+  lineinfile:
+    dest: /etc/default/grub
+    backup: true
+    backrefs: true
+    state: present
+    regexp: '^(GRUB_CMDLINE_LINUX=(?!.*ipv6.disable)\"[^\"]+)(\".*)'
+    line: '\1 ipv6.disable=1\2'
+  register: ipv6grub
+
+- name: Configure Audit on Grub
+  lineinfile:
+    dest: /etc/default/grub
+    backup: true
+    backrefs: true
+    state: present
+    regexp: '^(GRUB_CMDLINE_LINUX=(?!.*audit)\"[^\"]+)(\".*)'
+    line: '\1 audit=1\2'
+  register: auditgrub
+
+- name: reconfigure grub with new parameters
+  command: grub2-mkconfig -o '{{ item.path }}'
+  with_items: '{{ grubcfg.files }}'
+  when: ipv6grub.changed or auditgrub.changed
+...

@@ -1,0 +1,11 @@
+---
+## This playbook is to configure limits for user
+## Restrict core dumps in limits.conf
+- name: Configure Limits for Core Dump
+  pam_limits:
+    dest: /etc/security/limits.conf
+    domain: '*'
+    limit_type: hard
+    limit_item: core
+    value: '0'
+    backup: yes

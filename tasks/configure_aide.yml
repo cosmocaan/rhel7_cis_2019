@@ -1,0 +1,46 @@
+---
+- name: install aide
+  yum:
+    name: aide
+    state: latest
+
+- name: copy aide configuration file
+  copy:
+    dest: /usr/local/etc/aide.conf
+    src: aide.conf
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify: 
+    - initiate aide database
+    - set new aide database active
+
+- name: create soft links for aide config and binary to /usr/local paths
+  file:
+    dest: '{{ item.dest }}'
+    src: '{{ item.src }}'
+    state: link
+    force: true
+  with_items:
+    - { dest: '/usr/local/bin/aide', src: '/usr/sbin/aide' }
+    - { dest: '/etc/aide.conf', src: '/usr/local/etc/aide.conf' }
+
+- name: put run_aide.sh script into place
+  copy: 
+    src: run_aide.sh
+    dest: /usr/local/bin/run_aide.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: cron job for root to run_aide.sh
+  lineinfile:
+    state: present
+    path: /var/spool/cron/root
+    line: '5 3 * * 1-5 /usr/local/bin/run_aide.sh'
+    create: true
+    group: root
+    owner: root
+
+...

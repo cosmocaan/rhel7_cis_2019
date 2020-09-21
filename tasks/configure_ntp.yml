@@ -1,0 +1,19 @@
+---
+- name: Configure NTPD to start under ntp user ownership (sysconfig)
+  lineinfile:
+    dest: /etc/sysconfig/ntpd
+    regexp: '^#?OPTIONS='
+    line: OPTIONS="-u ntp:ntp"
+  notify: restart ntpd service
+- name: Configure NTPD to start under ntp user ownership (systemd)
+  lineinfile:
+    dest: /usr/lib/systemd/system/ntpd.service
+    regexp: '^ExecStart'
+    line: ExecStart=/usr/sbin/ntpd -u ntp:ntp $OPTIONS
+  notify: restart ntpd service
+- name: configure ntp restrictions
+  lineinfile:
+    dest: /etc/ntp.conf
+    line: restrict -6 default kod nomodify notrap nopeer noquery
+  notify: restart ntpd service
+...

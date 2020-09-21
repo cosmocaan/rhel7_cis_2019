@@ -1,0 +1,115 @@
+---
+# vars file for rhel7_cis/
+
+#Filesystems to be disabled by configure_filesystems.yml
+disabled_kernmods:
+  - cramfs
+  - freevxfs
+  - jffs2
+  - hfs
+  - hfsplus
+  - squashfs
+  - udf
+  - dccp
+  - sctp
+  - rds
+  - tipc
+
+#Services to be disabled
+disabled_services:
+  - autofs
+  - firewalld
+  - avahi-daemon
+  - chargen-dgram
+  - chargen-stream
+  - daytime-dgram
+  - daytime-stream
+  - discard-dgram
+  - discard-stream
+  - echo-dgram
+  - echo-stream
+  - time-dgram
+  - time-stream
+  - tcpmux-server
+  - cups
+  - httpd
+  - rhnsd
+  - tftp
+  - xinetd
+  - slapd
+  - nfs
+  - nfs-server
+  - rpcbind
+  - named
+  - vsftpd
+  - dovecot
+  - smb
+  - squid
+  - rsh.socket
+  - rlogin.socket
+  - rexec.socket
+  - ntalk
+  - telnet.socket
+  - tftp.socket
+  - rsyncd
+  - ypserv
+  
+#Services to be removed
+removed_services:
+  - telnet-server
+  - telnet
+  - rsh-server
+  - rsh
+  - ypbind
+  - ypserv
+  - tftp
+  - tftp-server
+  - talk
+  - talk-server
+  - xinetd
+  - dhcp
+  - chrony
+  - prelink
+  - setroubleshoot
+  - mcstrans
+  - openldap-clients
+  
+install_packages:
+  - libselinux
+  - tcp_wrappers
+  - tcp_wrappers-libs
+  
+pam_files:
+  - path: /etc/passwd
+    owner: root
+    group: root
+    mode: 0644
+  - path: /etc/passwd-
+    owner: root
+    group: root
+    mode: 0644
+  - path: /etc/shadow
+    owner: root
+    group: root
+    mode: 0000
+  - path: /etc/shadow-
+    owner: root
+    group: root
+    mode: 0000
+  - path: /etc/group
+    owner: root
+    group: root
+    mode: 0644
+  - path: /etc/group-
+    owner: root
+    group: root
+    mode: 0644
+  - path: /etc/gshadow
+    owner: root
+    group: root
+    mode: 0000
+  - path: /etc/gshadow-
+    owner: root
+    group: root
+    mode: 0000
+...

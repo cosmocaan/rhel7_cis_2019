@@ -1,0 +1,17 @@
+---
+- name: Configure 10.x.x.x in hosts.allow
+  lineinfile:
+    line: "ALL: 10.0.0.0/255.0.0.0"
+    path: /etc/hosts.allow
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Configure lockout for all not listed in hosts.allow
+  lineinfile:
+    line: "ALL: ALL"
+    path: /etc/hosts.deny
+    mode: 0644
+    owner: root
+    group: root
+...

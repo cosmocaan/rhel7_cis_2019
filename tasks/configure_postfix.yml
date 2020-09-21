@@ -1,0 +1,8 @@
+---
+- name: configure postfix to only use loopback
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^inet_interfaces'
+    line: inet_interfaces = loopback-only
+  notify: restart postfix service
+...

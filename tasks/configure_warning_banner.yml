@@ -1,0 +1,34 @@
+---
+## Configure warning banner
+## Copy latest warning banner
+- name: Copy Latest motd Files
+  copy:
+    src: motd
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  with_items:
+    - /etc/motd
+    - /etc/issue
+    - /etc/issue.net
+
+## This section is for Gnome Display Manager which shouldn't be installed
+#- name: configure GDM banner to be used
+#  blockinfile:
+#    block: |
+#      user-db:user
+#      system-db:gdm
+#      file-db:/usr/share/gdm/greeter-dconf-defaults
+#    path: /etc/dconf/profile/gdm
+#  notify: dconf update
+#- name: configure banner for GDM
+#  blockinfile:
+#    block: |
+#      [org/gnome/login-screen]
+#      banner-message-enable=true
+#      banner-message-text='Authorized uses only. All activity may be monitored and reported.'
+#    path: /etc/dconf/db/gdm.d/01-banner-message
+#  notify: dconf update
+...

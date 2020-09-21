@@ -1,0 +1,54 @@
+---
+# Configure SSH service per Section 5.2 RHEL CIS Standards 2019
+- name: Ensure SSHD is on and enabled
+  service:
+    name: sshd
+    enabled: true
+    state: started
+
+- name: Configure SSHD Config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    owner: root
+    group: root
+    mode: 0600
+    backup: yes
+    validate: sshd -t -f %s
+  with_items:
+    - { regexp: '^#?Protocol ', line: 'Protocol 2' }
+    - { regexp: '^#?LogLevel ', line: 'LogLevel INFO' }
+    - { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin without-password' } ## For safety reason. Needed to be changed after test
+    #- { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin no' }
+    - { regexp: '^#?MaxAuthTries ', line: 'MaxAuthTries 4' }
+    - { regexp: '^#?HostbasedAuthentication ', line: 'HostbasedAuthentication no' }
+    - { regexp: '^#?IgnoreRhosts ', line: 'IgnoreRhosts yes' }
+    - { regexp: '^#?PermitEmptyPasswords ', line: 'PermitEmptyPasswords no' }
+    - { regexp: '^#?X11Forwarding ', line: 'X11Forwarding no' }
+    - { regexp: '^#?PermitUserEnvironment ', line: 'PermitUserEnvironment no' }
+    - { regexp: '^#?ClientAliveInterval ', line: 'ClientAliveInterval 300' }
+    - { regexp: '^#?ClientAliveCountMax ', line: 'ClientAliveCountMax 0' }
+    - { regexp: '^#?Banner ', line: 'Banner /etc/issue.net' }
+    - { regexp: '^#?LoginGraceTime ', line: 'LoginGraceTime 60' }
+    - { regexp: '^#?DenyGroups ', line: 'DenyGroups nobody' }
+  notify: restart sshd service
+
+- name: Add Ciphers in SSHD Config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Ciphers .*$'
+    line: 'Ciphers aes128-ctr,aes192-ctr,aes256-ctr'
+    insertafter: '^# Ciphers'
+    validate: sshd -t -f %s
+  notify: restart sshd service
+
+- name: Add specific MACs to SSHD config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^MACs .*$'
+    line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+    insertafter: '^# Ciphers'
+    validate: sshd -t -f %s
+  notify: restart sshd service
+...

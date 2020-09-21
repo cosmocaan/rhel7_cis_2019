@@ -1,0 +1,36 @@
+---
+# handlers file for rhel7_cis/
+- name: restart ntpd service
+  service:
+    name: ntpd
+    state: restarted
+
+- name: restart postfix service
+  service: 
+    name: postfix
+    state: restarted
+
+- name: initiate aide database
+  command: /usr/local/bin/aide --init
+
+- name: set new aide database active
+  file:
+    src: /usr/local/etc/aide.db.new.gz
+    dest: /usr/local/etc/aide.db/gz
+
+- name: restart auditd service
+  command: service auditd restart
+
+- name: restart rsyslog service
+  service:
+    name: rsyslog
+    state: restarted
+
+#- name: grub2-mkconfig
+#  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name: restart sshd service
+  service:
+    name: sshd
+    state: restarted
+...

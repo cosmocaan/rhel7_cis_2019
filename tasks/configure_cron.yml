@@ -1,0 +1,56 @@
+---
+## Configuring cron settings per Section 5.1 of CIS Benchmarks 2019
+
+- name: Ensure Cron is enabled
+  service:
+    name: crond
+    enabled: true
+    state: started
+
+- name: check if cron files exist
+  find:
+    path: /etc
+    file_type: file
+    use_regex: true
+    pattern: '(anacrontab|crontab|cron.allow|at.allow)'
+  register: cronfiles
+- name: Set mode and ownership on cron files
+  file:
+    path: '{{ item.path }}'
+    owner: root
+    group: root
+    mode: og-rwx
+    state: file
+  with_items:
+    - '{{ cronfiles.files }}'
+
+- name: Set mode and ownership on cron directories
+  file:
+    path: '{{ item }}'
+    owner: root
+    group: root
+    mode: og-rwx
+    state: directory
+    recurse: true
+  with_items:
+    - /etc/cron.hourly
+    - /etc/cron.daily
+    - /etc/cron.weekly
+    - /etc/cron.monthly
+    - /etc/cron.d
+
+- name: remove unwanted cron files
+  file: 
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/cron.deny
+    - /etc/at.deny
+
+- name: set cron to set permisisons on /var/log files
+  cron:
+    name: "logperm"
+    minute: "0,30"
+    job: "find /var/log -type f -exec chmod g-wx,o-rwx {} +"
+
+...
