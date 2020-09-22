@@ -39,5 +39,5 @@
     - { files: /usr/share/doc/fping-3.10/COPYING }
     - { files: /usr/share/doc/fping-3.10/ChangeLog }
     - { files: /usr/share/doc/fping-3.10/README } 
-
+  ignore_errors: yes
 ...
