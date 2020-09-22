@@ -1,9 +1,9 @@
 ---
 # tasks file for rhel7_cis_2019/main.yml
-#- name: Validate Operating System and Version are compatible
-#  fail:
-#    msg: 'It appears you are attempting to run this on an invalid Operating System.  This role is for Red Hat Enterprise Linux and CentOS  version 7.  You appear to be attempting this on {{ ansible_distribution }} version {{ ansible_distribution_major_version }}'
-#  when: ansible_distribution != "CentOS" or ansible_distribution_major_version != '7'
+- name: Validate Operating System and Version are compatible
+  fail:
+    msg: 'It appears you are attempting to run this on an invalid Operating System.  This role is for Red Hat Enterprise Linux and CentOS  version 7.  You appear to be attempting this on {{ ansible_distribution }} version {{ ansible_distribution_major_version }}'
+  when: ansible_distribution_major_version != '7'
 - include: configure_usr_env.yml
 - include: configure_audit.yml
 - include: configure_cron.yml
