@@ -4,20 +4,20 @@
   fail:
     msg: 'It appears you are attempting to run this on an invalid Operating System.  This role is for Red Hat Enterprise Linux and CentOS  version 7.  You appear to be attempting this on {{ ansible_distribution }} version {{ ansible_distribution_major_version }}'
   when: ansible_distribution_major_version != '7'
-#- include: configure_usr_env.yml
+- include: configure_usr_env.yml
 - include: configure_audit.yml
-#- include: configure_cron.yml
-#- include: configure_filesystems.yml
-#- include: configure_grub.yml
-#- include: configure_hosts_files.yml
-#- include: configure_kernel_parameters.yml
-#- include: configure_limits.yml
-#- include: configure_modprobe.yml
-#- include: configure_ntp.yml
-#- include: configure_postfix.yml
-#- include: configure_rsyslog.yml
-#- include: configure_services.yml
-#- include: configure_ssh.yml
-#- include: configure_warning_banner.yml
-#- include: configure_yum.yml
+- include: configure_cron.yml
+- include: configure_filesystems.yml
+- include: configure_grub.yml
+- include: configure_hosts_files.yml
+- include: configure_kernel_parameters.yml
+- include: configure_limits.yml
+- include: configure_modprobe.yml
+- include: configure_ntp.yml
+- include: configure_postfix.yml
+- include: configure_rsyslog.yml
+- include: configure_services.yml
+- include: configure_ssh.yml
+- include: configure_warning_banner.yml
+- include: configure_yum.yml
 ...
