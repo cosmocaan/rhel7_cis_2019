@@ -7,7 +7,7 @@
 - include: configure_usr_env.yml
 - include: configure_audit.yml
 - include: configure_cron.yml
-- include: configure_filesystems.yml
+#- include: configure_filesystems.yml
 - include: configure_grub.yml
 - include: configure_hosts_files.yml
 - include: configure_kernel_parameters.yml

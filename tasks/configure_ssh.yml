@@ -19,8 +19,8 @@
   with_items:
     - { regexp: '^#?Protocol ', line: 'Protocol 2' }
     - { regexp: '^#?LogLevel ', line: 'LogLevel INFO' }
-    - { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin without-password' } ## For safety reason. Needed to be changed after test
-    #- { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin no' }
+    #- { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin without-password' } ## For safety reason. Needed to be changed after test
+    - { regexp: '^#?PermitRootLogin ', line: 'PermitRootLogin no' }
     - { regexp: '^#?MaxAuthTries ', line: 'MaxAuthTries 4' }
     - { regexp: '^#?HostbasedAuthentication ', line: 'HostbasedAuthentication no' }
     - { regexp: '^#?IgnoreRhosts ', line: 'IgnoreRhosts yes' }
@@ -28,7 +28,7 @@
     - { regexp: '^#?X11Forwarding ', line: 'X11Forwarding no' }
     - { regexp: '^#?PermitUserEnvironment ', line: 'PermitUserEnvironment no' }
     - { regexp: '^#?ClientAliveInterval ', line: 'ClientAliveInterval 300' }
-    - { regexp: '^#?ClientAliveCountMax ', line: 'ClientAliveCountMax 0' }
+    - { regexp: '^#?ClientAliveCountMax ', line: 'ClientAliveCountMax 3' }
     - { regexp: '^#?Banner ', line: 'Banner /etc/issue.net' }
     - { regexp: '^#?LoginGraceTime ', line: 'LoginGraceTime 60' }
     - { regexp: '^#?DenyGroups ', line: 'DenyGroups nobody' }
